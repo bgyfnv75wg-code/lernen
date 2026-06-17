@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wochenplan – Phase 1: HTML & CSS</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0c0e13;
+    --surface: #13151c;
+    --surface2: #191c25;
+    --border: #252836;
+    --accent: #f97316;
+    --accent-dim: rgba(249,115,22,0.12);
+    --blue: #38bdf8;
+    --blue-dim: rgba(56,189,248,0.1);
+    --green: #34d399;
+    --green-dim: rgba(52,211,153,0.1);
+    --purple: #a78bfa;
+    --purple-dim: rgba(167,139,250,0.1);
+    --yellow: #fbbf24;
+    --yellow-dim: rgba(251,191,36,0.1);
+    --text: #dde1ef;
+    --muted: #6b7094;
+    --muted2: #4a4e68;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2rem 1.5rem 3rem;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  /* ── Header ── */
+  .top-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--accent-dim);
+    border: 1px solid rgba(249,115,22,0.25);
+    border-radius: 999px;
+    padding: 0.3rem 0.9rem;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.2rem;
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 0.6rem;
+  }
+
+  h1 span { color: var(--accent); }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.6;
+    max-width: 560px;
+    margin-bottom: 2rem;
+  }
+
+  /* ── Nav tabs ── */
+  .week-nav {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.8rem;
+  }
+
+  .week-tab {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.45rem 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .week-tab:hover { border-color: #3a3f55; color: var(--text); }
+  .week-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .week-tab.done-tab { border-color: var(--green); color: var(--green); background: var(--green-dim); }
+  .week-tab.done-tab.active { background: var(--green); color: #fff; }
+
+  /* ── Week panel ── */
+  .week-panel { display: none; }
+  .week-panel.active { display: block; }
+
+  .week-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .week-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--accent);
+    opacity: 0.25;
+    flex-shrink: 0;
+  }
+
+  .week-info h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+  }
+
+  .week-info p {
+    font-size: 0.83rem;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  .week-meta {
+    display: flex;
+    gap: 0.6rem;
+    margin-top: 0.7rem;
+    flex-wrap: wrap;
+  }
+
+  .meta-chip {
+    font-size: 0.7rem;
+    padding: 0.22rem 0.65rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+
+  /* ── Day cards ── */
+  .days-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    margin-bottom: 1.8rem;
+  }
+
+  .day-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .day-header {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.8rem 1.1rem;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .day-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    width: 72px;
+    flex-shrink: 0;
+  }
+
+  .day-topic {
+    flex: 1;
+    font-size: 0.88rem;
+    font-weight: 500;
+  }
+
+  .day-duration {
+    font-size: 0.72rem;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  .day-chevron {
+    color: var(--muted2);
+    font-size: 0.75rem;
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+
+  .day-card.open .day-chevron { transform: rotate(90deg); }
+
+  .day-body {
+    display: none;
+    padding: 0 1.1rem 1rem;
+    background: var(--surface2);
+  }
+
+  .day-card.open .day-body { display: block; }
+
+  .day-tasks { list-style: none; display: flex; flex-direction: column; gap: 0.45rem; margin-bottom: 0.8rem; }
+
+  .day-task {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    padding: 0.55rem 0.75rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.12s;
+    border: 1px solid transparent;
+  }
+  .day-task:hover { background: rgba(255,255,255,0.03); border-color: var(--border); }
+  .day-task.done { opacity: 0.45; }
+
+  .task-cb {
+    width: 16px; height: 16px;
+    border-radius: 4px;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+    margin-top: 2px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.6rem;
+    color: #fff;
+    transition: all 0.15s;
+  }
+  .day-task.done .task-cb { background: var(--accent); border-color: var(--accent); }
+
+  .task-txt {
+    font-size: 0.84rem;
+    line-height: 1.45;
+    flex: 1;
+  }
+  .day-task.done .task-txt { text-decoration: line-through; }
+
+  .task-type {
+    font-size: 0.62rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.05);
+    color: var(--muted);
+    white-space: nowrap;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+
+  .day-tip {
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-style: italic;
+    padding: 0.5rem 0.4rem 0;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ── Free day ── */
+  .free-day {
+    background: var(--surface);
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+    padding: 0.8rem 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    opacity: 0.65;
+  }
+  .free-day .day-name { color: var(--muted2); }
+  .free-day .day-topic { font-size: 0.85rem; color: var(--muted); }
+
+  /* ── Resources ── */
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.9rem;
+  }
+
+  .res-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 0.7rem;
+    margin-bottom: 1.8rem;
+  }
+
+  .res-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.9rem 1rem;
+    transition: border-color 0.15s;
+  }
+  .res-card:hover { border-color: #3a3f55; }
+
+  .res-card-top {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.45rem;
+  }
+
+  .res-icon {
+    width: 28px; height: 28px;
+    border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+
+  .res-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+  }
+
+  .res-desc {
+    font-size: 0.76rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .res-lang {
+    display: inline-block;
+    margin-top: 0.5rem;
+    font-size: 0.62rem;
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    font-family: 'Syne', sans-serif;
+    letter-spacing: 0.05em;
+  }
+  .lang-de { background: var(--blue-dim); color: var(--blue); border: 1px solid rgba(56,189,248,0.2); }
+  .lang-en { background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid var(--border); }
+
+  /* ── Motto box ── */
+  .motto-box {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 10px;
+    padding: 1rem 1.2rem;
+    background: var(--accent-dim);
+    font-size: 0.83rem;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+  .motto-box strong { color: var(--accent); }
+
+  /* ── Progress ── */
+  .prog-bar-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.2rem;
+    margin-bottom: 1.8rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .prog-label { font-family: 'Syne', sans-serif; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); white-space: nowrap; }
+  .prog-outer { flex: 1; height: 6px; background: var(--border); border-radius: 999px; overflow: hidden; }
+  .prog-inner { height: 100%; background: linear-gradient(90deg, var(--accent), var(--yellow)); border-radius: 999px; transition: width 0.4s; }
+  .prog-pct { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.88rem; color: var(--accent); min-width: 2.8rem; text-align: right; }
+
+  /* ── Week progress dots ── */
+  .week-dots {
+    display: flex;
+    gap: 0.35rem;
+    align-items: center;
+    margin-bottom: 0.3rem;
+  }
+  .w-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: background 0.2s;
+  }
+  .w-dot.filled { background: var(--green); }
+
+  @media (max-width: 600px) {
+    h1 { font-size: 1.7rem; }
+    .week-num { font-size: 2.5rem; }
+    .res-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-badge">📅 Phase 1 · Wochenplan</div>
+<h1>HTML & CSS –<br><span>Woche für Woche</span></h1>
+<p class="subtitle">6–8 Wochen, ~45 Minuten pro Tag. Wähle unten eine Woche aus, öffne die Tage und hake deine Aufgaben ab.</p>
+
+<div class="prog-bar-wrap">
+  <span class="prog-label">Fortschritt Phase 1</span>
+  <div class="prog-outer"><div class="prog-inner" id="mainProg" style="width:0%"></div></div>
+  <span class="prog-pct" id="mainPct">0%</span>
+</div>
+
+<nav class="week-nav" id="weekNav"></nav>
+<div id="weekPanels"></div>
+
+<!-- Ressourcen -->
+<div style="margin-top:2.5rem">
+  <div class="section-title">📚 Empfohlene Ressourcen</div>
+  <div class="res-grid">
+    <div class="res-card">
+      <div class="res-card-top">
+        <div class="res-icon" style="background:rgba(56,189,248,0.12);color:var(--blue)">🎓</div>
+        <div class="res-name">freeCodeCamp (DE)</div>
+      </div>
+      <div class="res-desc">Kostenloser Kurs mit interaktiven Aufgaben – HTML & CSS Zertifikat.</div>
+      <span class="res-lang lang-de">🇩🇪 Deutsch verfügbar</span>
+    </div>
+    <div class="res-card">
+      <div class="res-card-top">
+        <div class="res-icon" style="background:rgba(251,191,36,0.12);color:var(--yellow)">📖</div>
+        <div class="res-name">MDN Web Docs</div>
+      </div>
+      <div class="res-desc">Die offizielle Referenz von Mozilla – die zuverlässigste Quelle im Web.</div>
+      <span class="res-lang lang-de">🇩🇪 Auf Deutsch verfügbar</span>
+    </div>
+    <div class="res-card">
+      <div class="res-card-top">
+        <div class="res-icon" style="background:rgba(167,139,250,0.12);color:var(--purple)">▶️</div>
+        <div class="res-name">Traversy Media</div>
+      </div>
+      <div class="res-desc">„HTML Crash Course" auf YouTube – schnell, praxisnah, sehr beliebt.</div>
+      <span class="res-lang lang-en">🇬🇧 Englisch (mit DE Untertiteln)</span>
+    </div>
+    <div class="res-card">
+      <div class="res-card-top">
+        <div class="res-icon" style="background:rgba(52,211,153,0.12);color:var(--green)">🌐</div>
+        <div class="res-name">selfhtml.org</div>
+      </div>
+      <div class="res-desc">Deutschsprachiges Wiki rund um HTML, CSS & JavaScript – seit Jahren eine Institution.</div>
+      <span class="res-lang lang-de">🇩🇪 Komplett auf Deutsch</span>
+    </div>
+    <div class="res-card">
+      <div class="res-card-top">
+        <div class="res-icon" style="background:rgba(249,115,22,0.12);color:var(--accent)">🎮</div>
+        <div class="res-name">CSS Flexbox Froggy</div>
+      </div>
+      <div class="res-desc">Interaktives Spiel zum Lernen von Flexbox – macht wirklich Spaß.</div>
+      <span class="res-lang lang-de">🇩🇪 Deutsch verfügbar</span>
+    </div>
+    <div class="res-card">
+      <div class="res-card-top">
+        <div class="res-icon" style="background:rgba(56,189,248,0.12);color:var(--blue)">🎮</div>
+        <div class="res-name">CSS Grid Garden</div>
+      </div>
+      <div class="res-desc">Lerne CSS Grid spielerisch – Schritt für Schritt durch 28 Levels.</div>
+      <span class="res-lang lang-de">🇩🇪 Deutsch verfügbar</span>
+    </div>
+    <div class="res-card">
+      <div class="res-card-top">
+        <div class="res-icon" style="background:rgba(251,191,36,0.12);color:var(--yellow)">🎯</div>
+        <div class="res-name">The Odin Project</div>
+      </div>
+      <div class="res-desc">Strukturierter Gratis-Kurs mit echten Projekten – sehr empfohlen für Einsteiger.</div>
+      <span class="res-lang lang-en">🇬🇧 Englisch (sehr anfängerfreundlich)</span>
+    </div>
+    <div class="res-card">
+      <div class="res-card-top">
+        <div class="res-icon" style="background:rgba(167,139,250,0.12);color:var(--purple)">🇩🇪</div>
+        <div class="res-name">Webkurs.eu</div>
+      </div>
+      <div class="res-desc">Kompakter Einsteigerkurs für HTML & CSS – vollständig auf Deutsch.</div>
+      <span class="res-lang lang-de">🇩🇪 Komplett auf Deutsch</span>
+    </div>
+  </div>
+</div>
+
+<div class="motto-box">
+  <strong>💡 Goldene Regel:</strong> Schreibe jeden Tag selbst Code – auch wenn es nur 20 Minuten sind. Kopieren verstärkt nichts, tippen trainiert das Muster-Erkennen im Gehirn. Wenn etwas nicht funktioniert: <strong>erst selbst debuggen</strong>, dann googeln, dann fragen.
+</div>
+
+<script>
+const weeks = [
+  {
+    id: 'w1', title: 'Wie das Internet funktioniert + HTML Einstieg',
+    goal: 'Du verstehst, was passiert wenn du eine Website aufrufst, und kannst einfache HTML-Seiten schreiben.',
+    time: '~45 Min/Tag', focus: 'Theorie + HTML Grundstruktur',
+    days: [
+      { name: 'Mo', topic: 'Wie funktioniert das Internet?', free: false, tasks: [
+        {id:'w1d1t1', text:'Video schauen: „Wie funktioniert das Internet?" (z.B. auf YouTube, deutsch suchen)', type:'Video'},
+        {id:'w1d1t2', text:'Begriffe notieren: Browser, Server, HTTP, URL, HTML', type:'Lesen'},
+        {id:'w1d1t3', text:'Eigenen Browser inspizieren: Rechtsklick → „Untersuchen" auf einer Webseite', type:'Erkunden'},
+      ], tip: 'Keine Angst vor dem Inspektor – du kannst damit nichts kaputt machen!' },
+      { name: 'Di', topic: 'Erste HTML-Datei & Grundstruktur', free: false, tasks: [
+        {id:'w1d2t1', text:'VS Code installieren (kostenlos, code.visualstudio.com)', type:'Setup'},
+        {id:'w1d2t2', text:'Erste .html Datei erstellen, im Browser öffnen', type:'Praxis'},
+        {id:'w1d2t3', text:'Grundstruktur tippen: <!DOCTYPE>, <html>, <head>, <body>', type:'Code'},
+      ], tip: 'Tippe alles selbst ab – nicht kopieren!' },
+      { name: 'Mi', topic: 'Texte & Überschriften in HTML', free: false, tasks: [
+        {id:'w1d3t1', text:'Tags lernen: h1–h6, p, strong, em, br, hr', type:'Lesen'},
+        {id:'w1d3t2', text:'Eine kleine „Über mich" Seite mit Text und Überschriften bauen', type:'Praxis'},
+        {id:'w1d3t3', text:'MDN-Seite zu <p> und <h1> lesen (auf Deutsch)', type:'Lesen'},
+      ], tip: 'selfhtml.org ist auf Deutsch – sehr gut für Nachschlagen.' },
+      { name: 'Do', topic: 'Links & Bilder', free: false, tasks: [
+        {id:'w1d4t1', text:'Anker-Tag <a href="..."> verstehen und ausprobieren', type:'Code'},
+        {id:'w1d4t2', text:'Ein Bild mit <img src="..." alt="..."> einfügen', type:'Code'},
+        {id:'w1d4t3', text:'Unterschied absoluter und relativer Pfade verstehen', type:'Konzept'},
+      ], tip: 'Das alt-Attribut bei Bildern ist wichtig – für Barrierefreiheit & Google.' },
+      { name: 'Fr', topic: 'Listen & Tabellen', free: false, tasks: [
+        {id:'w1d5t1', text:'Geordnete (ol) und ungeordnete Listen (ul) einbauen', type:'Code'},
+        {id:'w1d5t2', text:'Eine einfache Tabelle mit <table>, <tr>, <td> erstellen', type:'Code'},
+        {id:'w1d5t3', text:'Alles auf der „Über mich" Seite kombinieren', type:'Praxis'},
+      ], tip: 'Tabellen nur für tabellarische Daten – nicht für Layout!' },
+      { name: 'Sa', topic: 'Wiederholung & Aufräumen', free: false, tasks: [
+        {id:'w1d6t1', text:'Alle gelernten Tags auf einem Spickzettel zusammenfassen', type:'Zusammenfassung'},
+        {id:'w1d6t2', text:'Seite aufräumen: sauberer Code, korrekte Einrückungen', type:'Praxis'},
+        {id:'w1d6t3', text:'Bei Fragen: Stack Overflow oder selfhtml.org Forum nutzen', type:'Community'},
+      ], tip: 'Ein guter Spickzettel spart später viel Zeit.' },
+      { name: 'So', topic: 'Freier Tag 🌿', free: true },
+    ]
+  },
+  {
+    id: 'w2', title: 'CSS Grundlagen – Farben, Schriften & das Box-Modell',
+    goal: 'Du kannst deiner HTML-Seite ein ansprechendes Design geben und verstehst, wie CSS-Regeln funktionieren.',
+    time: '~45 Min/Tag', focus: 'CSS Syntax + visuelles Denken',
+    days: [
+      { name: 'Mo', topic: 'CSS einbinden & erste Regeln', free: false, tasks: [
+        {id:'w2d1t1', text:'CSS per <link> in HTML einbinden (externe Stylesheet)', type:'Setup'},
+        {id:'w2d1t2', text:'Selektoren verstehen: Element, Klasse (.klasse), ID (#id)', type:'Konzept'},
+        {id:'w2d1t3', text:'Hintergrundfarbe und Textfarbe für die ganze Seite setzen', type:'Code'},
+      ], tip: 'Klassen (.name) nutzt du am häufigsten – IDs eher selten.' },
+      { name: 'Di', topic: 'Schriften & Textformatierung', free: false, tasks: [
+        {id:'w2d2t1', text:'font-family, font-size, font-weight, line-height ausprobieren', type:'Code'},
+        {id:'w2d2t2', text:'Google Fonts einbinden und eine Schrift wählen', type:'Praxis'},
+        {id:'w2d2t3', text:'text-align, text-decoration, letter-spacing erkunden', type:'Code'},
+      ], tip: 'fonts.google.com – kostenlos und riesige Auswahl.' },
+      { name: 'Mi', topic: 'Das Box-Modell', free: false, tasks: [
+        {id:'w2d3t1', text:'margin, padding, border und width/height verstehen', type:'Konzept'},
+        {id:'w2d3t2', text:'Browser-Devtools nutzen: Box-Modell live ansehen', type:'Erkunden'},
+        {id:'w2d3t3', text:'Experiment: Verschiedene margin/padding Werte ausprobieren', type:'Praxis'},
+      ], tip: 'Das Box-Modell ist DER wichtigste CSS-Grundbaustein.' },
+      { name: 'Do', topic: 'Farben & Hintergründe', free: false, tasks: [
+        {id:'w2d4t1', text:'Farben in CSS: Hex (#ff0000), RGB, HSL verstehen', type:'Konzept'},
+        {id:'w2d4t2', text:'Einen einfachen Farbverlauf (background-gradient) einbauen', type:'Code'},
+        {id:'w2d4t3', text:'coolors.co: Harmonische Farbpalette für die eigene Seite auswählen', type:'Tool'},
+      ], tip: 'coolors.co generiert wunderbare Farbpaletten auf Knopfdruck.' },
+      { name: 'Fr', topic: 'Display-Eigenschaft & einfaches Layout', free: false, tasks: [
+        {id:'w2d5t1', text:'display: block vs. inline vs. inline-block verstehen', type:'Konzept'},
+        {id:'w2d5t2', text:'Eine einfache Navigationsleiste mit Links nebeneinander bauen', type:'Praxis'},
+        {id:'w2d5t3', text:'Elemente mit max-width und margin: auto zentrieren', type:'Code'},
+      ], tip: 'margin: 0 auto ist der einfachste Weg, einen Block zu zentrieren.' },
+      { name: 'Sa', topic: 'Design der eigenen Seite verbessern', free: false, tasks: [
+        {id:'w2d6t1', text:'„Über mich" Seite aus Woche 1 mit CSS verschönern', type:'Praxis'},
+        {id:'w2d6t2', text:'Hover-Effekte auf Links und Buttons einbauen (:hover)', type:'Code'},
+        {id:'w2d6t3', text:'Screenshot machen und Fortschritt festhalten', type:'Reflexion'},
+      ], tip: 'Vergleiche vorher/nachher – das motiviert enorm!' },
+      { name: 'So', topic: 'Freier Tag 🌿', free: true },
+    ]
+  },
+  {
+    id: 'w3', title: 'CSS Flexbox – Moderne Layouts bauen',
+    goal: 'Du kannst Elemente flexibel anordnen und Layouts bauen, die wirklich gut aussehen.',
+    time: '~45 Min/Tag', focus: 'Flexbox + praktische Layouts',
+    days: [
+      { name: 'Mo', topic: 'Flexbox Grundkonzept', free: false, tasks: [
+        {id:'w3d1t1', text:'display: flex aktivieren und Unterschied zu Block verstehen', type:'Konzept'},
+        {id:'w3d1t2', text:'flex-direction (row, column) ausprobieren', type:'Code'},
+        {id:'w3d1t3', text:'CSS Flexbox Froggy spielen (Level 1–10)', type:'Spiel'},
+      ], tip: 'flexboxfroggy.com – lerne Flexbox spielerisch.' },
+      { name: 'Di', topic: 'Ausrichten mit Flexbox', free: false, tasks: [
+        {id:'w3d2t1', text:'justify-content: flex-start, center, space-between etc.', type:'Code'},
+        {id:'w3d2t2', text:'align-items: stretch, center, flex-start verstehen', type:'Code'},
+        {id:'w3d2t3', text:'CSS Flexbox Froggy Level 11–20', type:'Spiel'},
+      ], tip: 'justify-content = horizontale Achse, align-items = vertikale Achse.' },
+      { name: 'Mi', topic: 'Flex-Items & Wrapping', free: false, tasks: [
+        {id:'w3d3t1', text:'flex-wrap, flex-grow, flex-shrink und gap verstehen', type:'Konzept'},
+        {id:'w3d3t2', text:'Karten-Layout (Cards nebeneinander) bauen', type:'Praxis'},
+        {id:'w3d3t3', text:'CSS Flexbox Froggy Level 21–24 (abschließen)', type:'Spiel'},
+      ], tip: 'gap ist moderner als margin für Abstände zwischen Flex-Items.' },
+      { name: 'Do', topic: 'Praxis: Header & Navigation', free: false, tasks: [
+        {id:'w3d4t1', text:'Navigation mit Logo links + Links rechts bauen (Flexbox)', type:'Praxis'},
+        {id:'w3d4t2', text:'Sticky Header mit position: sticky ausprobieren', type:'Code'},
+        {id:'w3d4t3', text:'Header auf der eigenen Seite einbauen', type:'Praxis'},
+      ], tip: 'Sticky Header: position: sticky; top: 0; – so einfach ist das!' },
+      { name: 'Fr', topic: 'Praxis: Card-Layout & Footer', free: false, tasks: [
+        {id:'w3d5t1', text:'3 Karten nebeneinander mit Flexbox layouten', type:'Praxis'},
+        {id:'w3d5t2', text:'Footer mit zwei Spalten bauen', type:'Praxis'},
+        {id:'w3d5t3', text:'box-shadow für Karten-Effekt einsetzen', type:'Code'},
+      ], tip: 'box-shadow: 0 4px 12px rgba(0,0,0,0.1) – subtil aber wirkungsvoll.' },
+      { name: 'Sa', topic: 'Mini-Seite mit Flexbox-Layout', free: false, tasks: [
+        {id:'w3d6t1', text:'Komplette Seite mit Header, Inhalt-Karten und Footer bauen', type:'Projekt'},
+        {id:'w3d6t2', text:'Code aufräumen und kommentieren', type:'Praxis'},
+        {id:'w3d6t3', text:'Seite in verschiedenen Browser-Fenstergrößen testen', type:'Test'},
+      ], tip: 'Kommentare im Code (<!-- ... -->) helfen dir später beim Wiederlesen.' },
+      { name: 'So', topic: 'Freier Tag 🌿', free: true },
+    ]
+  },
+  {
+    id: 'w4', title: 'CSS Grid – Zweidimensionale Layouts',
+    goal: 'Du kannst komplexe Seitenlayouts mit CSS Grid meisterhaft umsetzen.',
+    time: '~45 Min/Tag', focus: 'CSS Grid + responsive Grundlagen',
+    days: [
+      { name: 'Mo', topic: 'Grid Grundkonzept', free: false, tasks: [
+        {id:'w4d1t1', text:'display: grid aktivieren, grid-template-columns definieren', type:'Konzept'},
+        {id:'w4d1t2', text:'fr-Einheit und repeat() kennenlernen', type:'Code'},
+        {id:'w4d1t3', text:'CSS Grid Garden Level 1–10 spielen (cssgridgarden.com)', type:'Spiel'},
+      ], tip: 'Grid und Flexbox schließen sich nicht aus – nutze beide je nach Aufgabe.' },
+      { name: 'Di', topic: 'Zeilen, Spalten & Lücken', free: false, tasks: [
+        {id:'w4d2t1', text:'grid-template-rows, gap (column-gap, row-gap)', type:'Code'},
+        {id:'w4d2t2', text:'grid-column und grid-row für Elemente einsetzen', type:'Code'},
+        {id:'w4d2t3', text:'CSS Grid Garden Level 11–20', type:'Spiel'},
+      ], tip: 'grid-column: 1 / 3 bedeutet „von Linie 1 bis Linie 3 spannen".' },
+      { name: 'Mi', topic: 'Grid-Bereiche & Template-Areas', free: false, tasks: [
+        {id:'w4d3t1', text:'grid-template-areas kennenlernen – Seitenlayout benennen', type:'Konzept'},
+        {id:'w4d3t2', text:'Klassisches Layout (Header, Sidebar, Main, Footer) mit Grid bauen', type:'Praxis'},
+        {id:'w4d3t3', text:'CSS Grid Garden abschließen (Level 21–28)', type:'Spiel'},
+      ], tip: 'Template-Areas machen Layout-Code sehr lesbar – fast wie eine Skizze.' },
+      { name: 'Do', topic: 'Grid vs. Flexbox – wann was?', free: false, tasks: [
+        {id:'w4d4t1', text:'Vergleich lesen: Grid für 2D, Flexbox für 1D – Faustregel verstehen', type:'Konzept'},
+        {id:'w4d4t2', text:'Bild-Galerie mit Grid bauen (gleichmäßige Kacheln)', type:'Praxis'},
+        {id:'w4d4t3', text:'auto-fill und auto-fit für flexible Gitter ausprobieren', type:'Code'},
+      ], tip: 'auto-fill + minmax(200px, 1fr) = automatisch responsive Galerie!' },
+      { name: 'Fr', topic: 'Responsive Design Einführung', free: false, tasks: [
+        {id:'w4d5t1', text:'Media Queries verstehen: @media (max-width: 768px) { ... }', type:'Konzept'},
+        {id:'w4d5t2', text:'Grid auf Mobilgeräten auf eine Spalte umschalten', type:'Code'},
+        {id:'w4d5t3', text:'Viewport Meta-Tag in <head> kontrollieren', type:'Code'},
+      ], tip: 'Mobile first denken: zuerst fürs Handy, dann fürs Desktop erweitern.' },
+      { name: 'Sa', topic: 'Responsive Seite fertigstellen', free: false, tasks: [
+        {id:'w4d6t1', text:'Eigene Seite mit Media Queries responsive machen', type:'Praxis'},
+        {id:'w4d6t2', text:'Chrome DevTools: Geräte-Simulator testen (Handy, Tablet)', type:'Test'},
+        {id:'w4d6t3', text:'Seite einem Freund oder der Familie zeigen – erstes Feedback!', type:'Reflexion'},
+      ], tip: 'Echter Nutzer-Feedback ist unbezahlbar – frag ruhig um ehrliche Meinung.' },
+      { name: 'So', topic: 'Freier Tag 🌿', free: true },
+    ]
+  },
+  {
+    id: 'w5', title: 'CSS Fortgeschritten – Animationen & Pseudo-Klassen',
+    goal: 'Deine Seiten fühlen sich lebendig an – mit hover-Effekten, Übergängen und kleinen Animationen.',
+    time: '~45 Min/Tag', focus: 'UX-Details + CSS Tricks',
+    days: [
+      { name: 'Mo', topic: 'Übergänge (Transitions)', free: false, tasks: [
+        {id:'w5d1t1', text:'transition-Eigenschaft verstehen: property, duration, timing', type:'Konzept'},
+        {id:'w5d1t2', text:'Hover-Effekte mit sanftem Übergang auf Buttons und Links', type:'Code'},
+        {id:'w5d1t3', text:'Verschiedene timing-functions testen: ease, linear, ease-in-out', type:'Praxis'},
+      ], tip: 'transition: all 0.2s ease – einfach und wirksam.' },
+      { name: 'Di', topic: 'Animationen mit @keyframes', free: false, tasks: [
+        {id:'w5d2t1', text:'@keyframes definieren und animation-Eigenschaft einsetzen', type:'Code'},
+        {id:'w5d2t2', text:'Einfache Fade-in Animation für die ganze Seite bauen', type:'Praxis'},
+        {id:'w5d2t3', text:'animation-delay für gestaffelte Effekte nutzen', type:'Code'},
+      ], tip: 'Weniger ist mehr – eine subtile Animation wirkt professioneller.' },
+      { name: 'Mi', topic: 'Pseudo-Klassen & Pseudo-Elemente', free: false, tasks: [
+        {id:'w5d3t1', text:':hover, :focus, :active, :nth-child() kennenlernen', type:'Konzept'},
+        {id:'w5d3t2', text:'::before und ::after für dekorative Elemente nutzen', type:'Code'},
+        {id:'w5d3t3', text:'Tabellen-Zeilen abwechselnd färben mit :nth-child(odd)', type:'Praxis'},
+      ], tip: '::before und ::after sind mächtige Werkzeuge für CSS-Tricks.' },
+      { name: 'Do', topic: 'Formulare gestalten', free: false, tasks: [
+        {id:'w5d4t1', text:'HTML Formular mit input, textarea, button bauen', type:'Code'},
+        {id:'w5d4t2', text:'Formular-Felder mit CSS ansprechend gestalten', type:'Praxis'},
+        {id:'w5d4t3', text:':focus-Stil für Formular-Felder definieren', type:'Code'},
+      ], tip: 'Ein guter :focus-Stil ist wichtig für Barrierefreiheit.' },
+      { name: 'Fr', topic: 'CSS Variablen & Custom Properties', free: false, tasks: [
+        {id:'w5d5t1', text:'CSS Variablen definieren: --farbe: #f97316; und var(--farbe) nutzen', type:'Konzept'},
+        {id:'w5d5t2', text:'Alle Farben der eigenen Seite auf Variablen umstellen', type:'Praxis'},
+        {id:'w5d5t3', text:'Dunkles/helles Theme mit CSS Variablen vorbereiten', type:'Praxis'},
+      ], tip: 'CSS-Variablen machen spätere Änderungen super einfach.' },
+      { name: 'Sa', topic: 'Alles zusammenführen', free: false, tasks: [
+        {id:'w5d6t1', text:'Eigene Seite mit Animationen und Hover-Effekten aufwerten', type:'Praxis'},
+        {id:'w5d6t2', text:'Code-Review: Doppelten Code finden und vereinfachen', type:'Praxis'},
+        {id:'w5d6t3', text:'Seite mit Browser-Devtools auf Fehler prüfen', type:'Test'},
+      ], tip: 'Sauberer Code ist fast so wichtig wie funktionierender Code.' },
+      { name: 'So', topic: 'Freier Tag 🌿', free: true },
+    ]
+  },
+  {
+    id: 'w6', title: '🎯 Abschlussprojekt – Persönliche Portfolio-Seite',
+    goal: 'Du baust eine vollständige, responsive persönliche Website, die du wirklich zeigen kannst.',
+    time: '~60 Min/Tag', focus: 'Alles kombinieren + fertig stellen',
+    days: [
+      { name: 'Mo', topic: 'Planung & Struktur', free: false, tasks: [
+        {id:'w6d1t1', text:'Skizze der Seite auf Papier zeichnen (Wireframe)', type:'Planung'},
+        {id:'w6d1t2', text:'Sektionen planen: Header, Über mich, Projekte, Kontakt', type:'Planung'},
+        {id:'w6d1t3', text:'HTML-Grundstruktur mit semantischen Tags aufbauen', type:'Code'},
+      ], tip: '10 Minuten planen sparen 2 Stunden Umbauen.' },
+      { name: 'Di', topic: 'Header & Navigation', free: false, tasks: [
+        {id:'w6d2t1', text:'Sticky Navigation mit Flexbox bauen', type:'Praxis'},
+        {id:'w6d2t2', text:'Hero-Bereich mit Titel und Beschreibung designen', type:'Praxis'},
+        {id:'w6d2t3', text:'Smooth Scroll für Anker-Links aktivieren (scroll-behavior: smooth)', type:'Code'},
+      ], tip: 'Der erste Eindruck zählt – der Hero-Bereich ist das Wichtigste.' },
+      { name: 'Mi', topic: '„Über mich" Bereich', free: false, tasks: [
+        {id:'w6d3t1', text:'Text über dich schreiben (was lernst du, was interessiert dich?)', type:'Inhalt'},
+        {id:'w6d3t2', text:'Foto oder Avatar einbinden', type:'Praxis'},
+        {id:'w6d3t3', text:'Zweispaltiges Layout mit Grid oder Flexbox', type:'Code'},
+      ], tip: 'Authentizität überzeugt mehr als Perfektion.' },
+      { name: 'Do', topic: 'Projekte-Bereich', free: false, tasks: [
+        {id:'w6d4t1', text:'Mindestens 1–2 Projekte (auch aus diesem Kurs!) als Karten zeigen', type:'Inhalt'},
+        {id:'w6d4t2', text:'Karten-Grid mit hover-Effekt gestalten', type:'Praxis'},
+        {id:'w6d4t3', text:'Platzhalter-Bilder mit placeholder.com oder loremfaces.com', type:'Tool'},
+      ], tip: 'Auch kleine Übungsprojekte sind echte Projekte!' },
+      { name: 'Fr', topic: 'Kontakt-Bereich & Feinschliff', free: false, tasks: [
+        {id:'w6d5t1', text:'Kontaktformular einbauen (HTML-only, noch ohne Backend)', type:'Praxis'},
+        {id:'w6d5t2', text:'Soziale Links (GitHub, LinkedIn) im Footer', type:'Praxis'},
+        {id:'w6d5t3', text:'Favicon hinzufügen (favicon.io generiert einen)', type:'Detail'},
+      ], tip: 'Details wie Favicon machen den Unterschied zwischen Übung und Profi-Seite.' },
+      { name: 'Sa', topic: 'Responsive & Online stellen', free: false, tasks: [
+        {id:'w6d6t1', text:'Seite auf Mobile, Tablet und Desktop testen und anpassen', type:'Test'},
+        {id:'w6d6t2', text:'Seite auf GitHub Pages kostenlos veröffentlichen', type:'Deploy'},
+        {id:'w6d6t3', text:'Link teilen und stolz sein – du hast Phase 1 abgeschlossen! 🎉', type:'Meilenstein'},
+      ], tip: 'GitHub Pages ist kostenlos und perfekt für Portfolios.' },
+      { name: 'So', topic: 'Freier Tag + Feiern 🎉', free: true },
+    ]
+  }
+];
+
+const saved = JSON.parse(localStorage.getItem('wochenplan_v1') || '{}');
+
+function countDone() {
+  let total = 0, done = 0;
+  weeks.forEach(w => w.days.forEach(d => {
+    if (!d.free && d.tasks) { total += d.tasks.length; d.tasks.forEach(t => { if(saved[t.id]) done++; }); }
+  }));
+  return { total, done };
+}
+
+function weekDone(week) {
+  let total = 0, done = 0;
+  week.days.forEach(d => {
+    if (!d.free && d.tasks) { total += d.tasks.length; d.tasks.forEach(t => { if(saved[t.id]) done++; }); }
+  });
+  return total > 0 && done === total;
+}
+
+function updateProgress() {
+  const { total, done } = countDone();
+  const pct = total ? Math.round(done/total*100) : 0;
+  document.getElementById('mainProg').style.width = pct + '%';
+  document.getElementById('mainPct').textContent = pct + '%';
+}
+
+function renderNav(activeId) {
+  const nav = document.getElementById('weekNav');
+  nav.innerHTML = '';
+  weeks.forEach(w => {
+    const btn = document.createElement('button');
+    btn.className = 'week-tab' + (w.id === activeId ? ' active' : '') + (weekDone(w) ? ' done-tab' : '');
+    btn.textContent = (weekDone(w) ? '✓ ' : '') + w.id.replace('w','Woche ');
+    btn.addEventListener('click', () => renderAll(w.id));
+    nav.appendChild(btn);
+  });
+}
+
+function renderPanels(activeId) {
+  const c = document.getElementById('weekPanels');
+  c.innerHTML = '';
+  weeks.forEach(week => {
+    const panel = document.createElement('div');
+    panel.className = 'week-panel' + (week.id === activeId ? ' active' : '');
+    panel.id = week.id;
+
+    const wNum = week.id.replace('w','');
+    const { done: wDone, total: wTotal } = (() => {
+      let t=0,d=0; week.days.forEach(dy => { if(!dy.free && dy.tasks){ t+=dy.tasks.length; dy.tasks.forEach(tk=>{ if(saved[tk.id]) d++; }); } }); return {done:d,total:t};
+    })();
+
+    const dotsHtml = Array.from({length: wTotal}, (_, i) => `<div class="w-dot${i < wDone ? ' filled':''}"></div>`).join('');
+
+    panel.innerHTML = `
+      <div class="week-header">
+        <div class="week-num">${wNum.padStart(2,'0')}</div>
+        <div class="week-info">
+          <h2>${week.title}</h2>
+          <p>${week.goal}</p>
+          <div class="week-meta">
+            <span class="meta-chip">⏱ ${week.time}</span>
+            <span class="meta-chip">🎯 ${week.focus}</span>
+            <span class="meta-chip">${wDone}/${wTotal} Aufgaben</span>
+          </div>
+          <div class="week-dots" style="margin-top:0.7rem">${dotsHtml}</div>
+        </div>
+      </div>
+      <div class="days-grid">
+        ${week.days.map(day => {
+          if (day.free) return `<div class="free-day"><span class="day-name">${day.name}</span><span class="day-topic">${day.topic}</span></div>`;
+          const dayDone = day.tasks.filter(t => saved[t.id]).length;
+          return `
+            <div class="day-card" id="card-${day.tasks[0].id}">
+              <div class="day-header">
+                <span class="day-name" style="color:${dayDone===day.tasks.length?'var(--green)':'var(--accent)'}">${day.name}</span>
+                <span class="day-topic">${day.topic}</span>
+                <span class="day-duration">${dayDone}/${day.tasks.length}</span>
+                <span class="day-chevron">▶</span>
+              </div>
+              <div class="day-body">
+                <ul class="day-tasks">
+                  ${day.tasks.map(t => `
+                    <li class="day-task${saved[t.id]?' done':''}" data-id="${t.id}">
+                      <div class="task-cb">${saved[t.id]?'✓':''}</div>
+                      <span class="task-txt">${t.text}</span>
+                      <span class="task-type">${t.type}</span>
+                    </li>`).join('')}
+                </ul>
+                ${day.tip ? `<div class="day-tip">💬 ${day.tip}</div>` : ''}
+              </div>
+            </div>`;
+        }).join('')}
+      </div>`;
+
+    panel.querySelectorAll('.day-header').forEach(h => {
+      h.addEventListener('click', () => h.parentElement.classList.toggle('open'));
+    });
+
+    panel.querySelectorAll('.day-task').forEach(item => {
+      item.addEventListener('click', () => {
+        const id = item.dataset.id;
+        saved[id] = !saved[id];
+        localStorage.setItem('wochenplan_v1', JSON.stringify(saved));
+        renderAll(activeId);
+      });
+    });
+
+    c.appendChild(panel);
+  });
+}
+
+function renderAll(activeId) {
+  renderNav(activeId);
+  renderPanels(activeId);
+  updateProgress();
+}
+
+renderAll('w1');
+</script>
+</body>
+</html>

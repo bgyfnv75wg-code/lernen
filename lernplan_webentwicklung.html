@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lernplan Webentwicklung</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0e0f14; --surface: #16181f; --surface2: #1e2029;
+    --border: #2a2d3a; --accent: #f97316; --accent2: #3b82f6;
+    --text: #e8eaf0; --muted: #7a7e96;
+    --p1: #f97316; --p2: #3b82f6; --p3: #a855f7; --p4: #10b981;
+  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 2rem 1.5rem; }
+  header { margin-bottom: 2.5rem; border-left: 4px solid var(--accent); padding-left: 1.2rem; }
+  header .eyebrow { font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); font-family: 'Syne', sans-serif; margin-bottom: 0.4rem; }
+  header h1 { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; line-height: 1.1; }
+  header p { color: var(--muted); font-size: 0.9rem; margin-top: 0.5rem; }
+  .progress-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem 1.5rem; margin-bottom: 2rem; display: flex; align-items: center; gap: 1.2rem; }
+  .progress-label { font-family: 'Syne', sans-serif; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); white-space: nowrap; }
+  .progress-bar-outer { flex: 1; height: 8px; background: var(--border); border-radius: 999px; overflow: hidden; }
+  .progress-bar-inner { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 999px; transition: width 0.5s ease; }
+  .progress-pct { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.95rem; color: var(--accent); min-width: 3rem; text-align: right; }
+  .phase { margin-bottom: 1.2rem; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+  .phase-header { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.2rem; cursor: pointer; background: var(--surface); user-select: none; }
+  .phase-badge { font-family: 'Syne', sans-serif; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; padding: 0.28rem 0.7rem; border-radius: 999px; white-space: nowrap; }
+  .ph1 .phase-badge { background: rgba(249,115,22,0.15); color: var(--p1); }
+  .ph2 .phase-badge { background: rgba(59,130,246,0.15); color: var(--p2); }
+  .ph3 .phase-badge { background: rgba(168,85,247,0.15); color: var(--p3); }
+  .ph4 .phase-badge { background: rgba(16,185,129,0.15); color: var(--p4); }
+  .phase-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; flex: 1; }
+  .phase-meta { font-size: 0.75rem; color: var(--muted); white-space: nowrap; }
+  .phase-chevron { color: var(--muted); transition: transform 0.25s; font-size: 0.85rem; }
+  .phase.open .phase-chevron { transform: rotate(90deg); }
+  .phase-body { display: none; background: var(--surface2); padding: 1rem 1.2rem 1.2rem; }
+  .phase.open .phase-body { display: block; }
+  .phase-intro { font-size: 0.82rem; color: var(--muted); margin-bottom: 1rem; line-height: 1.6; font-style: italic; }
+  .task-list { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+  .task-item { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.65rem 0.9rem; border-radius: 8px; border: 1px solid transparent; cursor: pointer; transition: background 0.15s; }
+  .task-item:hover { background: rgba(255,255,255,0.04); border-color: var(--border); }
+  .task-item.done { opacity: 0.5; }
+  .task-checkbox { width: 18px; height: 18px; border-radius: 5px; border: 2px solid var(--border); flex-shrink: 0; margin-top: 2px; display: flex; align-items: center; justify-content: center; transition: background 0.15s; font-size: 0.65rem; color: #fff; }
+  .ph1 .task-item.done .task-checkbox { background: var(--p1); border-color: var(--p1); }
+  .ph2 .task-item.done .task-checkbox { background: var(--p2); border-color: var(--p2); }
+  .ph3 .task-item.done .task-checkbox { background: var(--p3); border-color: var(--p3); }
+  .ph4 .task-item.done .task-checkbox { background: var(--p4); border-color: var(--p4); }
+  .task-text { font-size: 0.87rem; line-height: 1.5; flex: 1; }
+  .task-item.done .task-text { text-decoration: line-through; }
+  .task-tag { font-size: 0.65rem; padding: 0.18rem 0.55rem; border-radius: 999px; background: rgba(255,255,255,0.06); color: var(--muted); white-space: nowrap; margin-top: 2px; }
+  .resources { margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 0.9rem; }
+  .resources-title { font-family: 'Syne', sans-serif; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.6rem; }
+  .res-list { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .res-chip { font-size: 0.75rem; padding: 0.3rem 0.8rem; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); }
+  .tip-box { margin-top: 1.5rem; border: 1px solid var(--border); border-left: 3px solid var(--accent2); border-radius: 10px; padding: 1rem 1.2rem; background: rgba(59,130,246,0.06); font-size: 0.82rem; color: var(--muted); line-height: 1.65; }
+  .tip-box strong { color: var(--accent2); }
+</style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">Persönlicher Lernplan</div>
+  <h1>Webentwicklung<br>für Einsteiger</h1>
+  <p>Ca. 6–9 Monate · Absoluter Anfänger → Junior Developer</p>
+</header>
+
+<div class="progress-wrap">
+  <span class="progress-label">Gesamtfortschritt</span>
+  <div class="progress-bar-outer"><div class="progress-bar-inner" id="progBar"></div></div>
+  <span class="progress-pct" id="progPct">0%</span>
+</div>
+
+<div id="phases"></div>
+
+<div class="tip-box">
+  <strong>💡 Tipp:</strong> Klicke auf eine Phase, um sie zu öffnen. Hake Aufgaben ab, wenn du sie erledigt hast. Lerne täglich <strong>30–60 Minuten</strong> konsequent – das schlägt jede Marathon-Session am Wochenende.
+</div>
+
+<script>
+const phases = [
+  {
+    id:'p1', cls:'ph1', label:'Phase 1', title:'Die Grundlagen', duration:'~6–8 Wochen',
+    intro:'Hier lernst du, wie Websites aufgebaut sind – HTML für Struktur und CSS für Design.',
+    tasks:[
+      {id:'t1',text:'Verstehen, wie das Internet & Browser funktionieren',tag:'Konzept'},
+      {id:'t2',text:'HTML: Tags, Attribute, semantische Struktur',tag:'HTML'},
+      {id:'t3',text:'Erste eigene HTML-Seite erstellen',tag:'Praxis'},
+      {id:'t4',text:'CSS: Farben, Schriften, Abstände, Box-Modell',tag:'CSS'},
+      {id:'t5',text:'CSS: Flexbox & Grid für Layouts verstehen',tag:'CSS'},
+      {id:'t6',text:'Responsive Design: Seiten mobilfreundlich gestalten',tag:'Praxis'},
+      {id:'t7',text:'🎯 Projekt: Persönliche Visitenkarten-Website bauen',tag:'Projekt'},
+    ],
+    resources:['freeCodeCamp (kostenlos)','MDN Web Docs','The Odin Project','W3Schools']
+  },
+  {
+    id:'p2', cls:'ph2', label:'Phase 2', title:'JavaScript – Interaktivität', duration:'~8–10 Wochen',
+    intro:'JavaScript ist die Sprache des Webs. Damit bringst du Logik und Interaktivität in deine Seiten.',
+    tasks:[
+      {id:'t8',text:'Variablen, Datentypen, Operatoren',tag:'JS Basics'},
+      {id:'t9',text:'Kontrollfluss: if/else, Schleifen, Funktionen',tag:'JS Basics'},
+      {id:'t10',text:'DOM-Manipulation: HTML per JS ändern',tag:'JS DOM'},
+      {id:'t11',text:'Events: Klicks, Formulare, Tastatureingaben',tag:'JS DOM'},
+      {id:'t12',text:'Arrays & Objekte sicher verwenden',tag:'JS Basics'},
+      {id:'t13',text:'Async JS: fetch, Promises, APIs ansprechen',tag:'Fortgeschr.'},
+      {id:'t14',text:'🎯 Projekt: Interaktive To-Do-Liste oder Quiz-App',tag:'Projekt'},
+    ],
+    resources:['javascript.info','freeCodeCamp JS-Kurs','Eloquent JavaScript (Buch, kostenlos)','Scrimba']
+  },
+  {
+    id:'p3', cls:'ph3', label:'Phase 3', title:'Tools & React', duration:'~4–6 Wochen',
+    intro:'Wie echte Entwickler arbeiten: Versionskontrolle mit Git und das populärste Frontend-Framework.',
+    tasks:[
+      {id:'t15',text:'Git & GitHub: Code versionieren und veröffentlichen',tag:'Tool'},
+      {id:'t16',text:'VS Code professionell einrichten',tag:'Tool'},
+      {id:'t17',text:'Node.js & npm: Pakete verwalten',tag:'Tool'},
+      {id:'t18',text:'React Grundlagen: Komponenten & Props',tag:'React'},
+      {id:'t19',text:'State-Management mit useState',tag:'React'},
+      {id:'t20',text:'🎯 Projekt: Einfache React-App (z. B. Wetter-App)',tag:'Projekt'},
+    ],
+    resources:['React Docs (react.dev)','GitHub Learning Lab','Scrimba React-Kurs','Fireship (YouTube)']
+  },
+  {
+    id:'p4', cls:'ph4', label:'Phase 4', title:'Portfolio & Jobstart', duration:'~4–6 Wochen',
+    intro:'Jetzt wird alles zusammengeführt. Du baust Projekte, die du zeigen kannst.',
+    tasks:[
+      {id:'t21',text:'Portfolio-Website erstellen & online stellen (Netlify/GitHub Pages)',tag:'Portfolio'},
+      {id:'t22',text:'Mindestens 2 eigene Projekte fertigstellen & dokumentieren',tag:'Portfolio'},
+      {id:'t23',text:'Grundlagen Barrierefreiheit (Accessibility) lernen',tag:'Wichtig'},
+      {id:'t24',text:'Dev-Community beitreten (Discord, Dev.to, Reddit)',tag:'Community'},
+      {id:'t25',text:'🎯 Ziel: Erstes Freelance-Projekt oder Open-Source-Beitrag',tag:'Ziel'},
+    ],
+    resources:['Netlify / Vercel','Frontendmentor.io','Dev.to','LinkedIn Profil optimieren']
+  }
+];
+
+const saved = JSON.parse(localStorage.getItem('lernplan_v1') || '{}');
+
+function updateProgress() {
+  const total = phases.reduce((s,p) => s + p.tasks.length, 0);
+  const done = Object.values(saved).filter(Boolean).length;
+  const pct = Math.round(done/total*100);
+  document.getElementById('progBar').style.width = pct+'%';
+  document.getElementById('progPct').textContent = pct+'%';
+}
+
+function render() {
+  const c = document.getElementById('phases');
+  c.innerHTML = '';
+  phases.forEach((phase, pi) => {
+    const el = document.createElement('div');
+    el.className = `phase ${phase.cls}`;
+    if (pi === 0) el.classList.add('open');
+    const done = phase.tasks.filter(t => saved[t.id]).length;
+    el.innerHTML = `
+      <div class="phase-header">
+        <span class="phase-badge">${phase.label}</span>
+        <span class="phase-title">${phase.title}</span>
+        <span class="phase-meta">${done}/${phase.tasks.length} · ${phase.duration}</span>
+        <span class="phase-chevron">▶</span>
+      </div>
+      <div class="phase-body">
+        <p class="phase-intro">${phase.intro}</p>
+        <ul class="task-list">
+          ${phase.tasks.map(t=>`
+            <li class="task-item${saved[t.id]?' done':''}" data-id="${t.id}">
+              <div class="task-checkbox">${saved[t.id]?'✓':''}</div>
+              <span class="task-text">${t.text}</span>
+              <span class="task-tag">${t.tag}</span>
+            </li>`).join('')}
+        </ul>
+        <div class="resources">
+          <div class="resources-title">📚 Empfohlene Ressourcen</div>
+          <div class="res-list">${phase.resources.map(r=>`<span class="res-chip">${r}</span>`).join('')}</div>
+        </div>
+      </div>`;
+    el.querySelector('.phase-header').addEventListener('click', () => el.classList.toggle('open'));
+    el.querySelectorAll('.task-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const id = item.dataset.id;
+        saved[id] = !saved[id];
+        localStorage.setItem('lernplan_v1', JSON.stringify(saved));
+        render(); updateProgress();
+      });
+    });
+    c.appendChild(el);
+  });
+  updateProgress();
+}
+render();
+</script>
+</body>
+</html>
